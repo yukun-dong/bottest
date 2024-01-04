@@ -1,0 +1,49 @@
+on: 
+  push:
+    branches:
+      - staging
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: dev
+    env: 
+      TEAMSFX_ENV_NAME: 'dev'
+      CI_ENABLED: true
+      TEAMSFX_CLI_VERSION: 2.1.0
+
+    steps:
+    - name: 'Checkout Github Action' 
+      uses: actions/checkout@master
+
+    - name: Setup Node 18.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '18.x'
+
+    - name: install cli
+      run: |
+        npm install -g @microsoft/teamsfx-cli@${{env.TEAMSFX_CLI_VERSION}}
+
+    - name: Login Azure by service principal 
+      run: |
+        npx teamsfx account login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_NAME}}  \
+        --service-principal true \
+        --tenant ${{vars.AZURE_TENANT_ID}} \
+        --password ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}} \
+        --interactive false
+
+    - name: Deploy to hosting environment
+      run: |
+        teamsfx deploy --env ${{env.TEAMSFX_ENV_NAME}} \
+        --interactive false
+
+
+    # - name: Package app
+    #   run: |
+    #     teamsfx package --env ${{env.TEAMSFX_ENV_NAME}}
+
+    # - name: upload zip
+    #   uses: actions/upload-artifact@v2
+    #   with:
+    #     name: appPackage
+    #     path: ./appPackage/build/appPackage.${{env.TEAMSFX_ENV_NAME}}.zip
