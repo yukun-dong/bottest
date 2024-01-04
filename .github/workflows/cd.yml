@@ -39,12 +39,11 @@ jobs:
         --interactive false
 
 
-    # - name: Package app
-    #   run: |
-    #     teamsfx package --env ${{env.TEAMSFX_ENV_NAME}}
+    - name: Package app
+      run: |
+        teamsfx package --env ${{env.TEAMSFX_ENV_NAME}}
 
-    # - name: upload zip
-    #   uses: actions/upload-artifact@v2
-    #   with:
-    #     name: appPackage
-    #     path: ./appPackage/build/appPackage.${{env.TEAMSFX_ENV_NAME}}.zip
+    - name: upload zip
+      uses: actions/upload-artifact@v2
+      with:
+        path: ./appPackage/build/appPackage.${{env.TEAMSFX_ENV_NAME}}.zip
