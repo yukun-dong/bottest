@@ -47,6 +47,10 @@ jobs:
         teamsfx package --env ${{env.TEAMSFX_ENV_NAME}}
 
     - name: upload zip
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
-        path: ./appPackage/build/appPackage.${{env.TEAMSFX_ENV_NAME}}.zip
+        name: appPackage.${{env.TEAMSFX_ENV_NAME}}
+        path: |
+         ./appPackage/build/manifest.${{env.TEAMSFX_ENV_NAME}}.json
+          ./appPackage/color.png
+          ./appPackage/outline.png
