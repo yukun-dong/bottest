@@ -42,7 +42,7 @@ jobs:
 
       - name: Package app
         run: |
-          teamsfx package --ignore-env-file true
+          npx teamsapp package --ignore-env-file true
 
       - name: unzip
         run: |
