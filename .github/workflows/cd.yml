@@ -1,4 +1,4 @@
-on: 
+on:
   push:
     branches:
       - master
@@ -6,51 +6,55 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: dev
-    env: 
-      TEAMSFX_ENV_NAME: 'dev'
+    env:
       CI_ENABLED: true
-      TEAMSFX_CLI_VERSION: 2.1.0
+      TEAMSFX_CLI_VERSION: "3.0.0-alpha.38a3757c0.0"
       BOT_AZURE_APP_SERVICE_RESOURCE_ID: ${{vars.BOT_AZURE_APP_SERVICE_RESOURCE_ID}}
       TEAMS_APP_ID: ${{vars.TEAMS_APP_ID}}
       BOT_ID: ${{vars.BOT_ID}}
       APP_NAME_SUFFIX: ${{vars.APP_NAME_SUFFIX}}
 
     steps:
-    - name: 'Checkout Github Action' 
-      uses: actions/checkout@master
+      - name: "Checkout Github Action"
+        uses: actions/checkout@master
 
-    - name: Setup Node 18.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: '18.x'
+      - name: Setup Node 18.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: "18.x"
 
-    - name: install cli
-      run: |
-        npm install -g @microsoft/teamsfx-cli@${{env.TEAMSFX_CLI_VERSION}}
+      - name: install cli
+        run: |
+          npm install @microsoft/teamsapp-cli@${{env.TEAMSFX_CLI_VERSION}}
 
-    - name: Login Azure by service principal 
-      run: |
-        npx teamsfx account login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_NAME}}  \
-        --service-principal true \
-        --tenant ${{vars.AZURE_TENANT_ID}} \
-        --password ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}} \
-        --interactive false
+      - name: Login Azure by service principal
+        run: |
+          npx teamsapp account login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_NAME}}  \
+          --service-principal true \
+          --tenant ${{vars.AZURE_TENANT_ID}} \
+          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}} \
+          --interactive false
 
-    - name: Deploy to hosting environment
-      run: |
-        teamsfx deploy --env ${{env.TEAMSFX_ENV_NAME}} \
-        --interactive false
+      - name: Deploy to hosting environment
+        run: |
+          npx teamsapp deploy --ignore-env-file true \
+          --interactive false
 
+      - name: Package app
+        run: |
+          teamsfx package --ignore-env-file true
 
-    - name: Package app
-      run: |
-        teamsfx package --env ${{env.TEAMSFX_ENV_NAME}}
+      - name: unzip
+        run: |
+          cd appPackage/build
+          unzip -o -d . appPackage.zip
+          cd -
 
-    - name: upload zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: appPackage.${{env.TEAMSFX_ENV_NAME}}
-        path: |
-         ./appPackage/build/manifest.${{env.TEAMSFX_ENV_NAME}}.json
-          ./appPackage/color.png
-          ./appPackage/outline.png
+      - name: upload appPackage
+        uses: actions/upload-artifact@v4
+        with:
+          name: appPackage
+          path: |
+            appPackage/build/manifest.json
+            appPackage/build/color.png
+            appPackage/build/outline.png
