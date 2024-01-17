@@ -25,7 +25,7 @@ jobs:
 
       - name: install cli
         run: |
-          npm install -g @microsoft/teamsapp-cli@${{env.TEAMSFX_CLI_VERSION}}
+          npm install @microsoft/teamsapp-cli@${{env.TEAMSFX_CLI_VERSION}}
 
       - name: Login Azure by service principal
         run: |
@@ -35,10 +35,10 @@ jobs:
           --password ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}} \
           --interactive false
 
-      - name: Deploy to hosting environment
-        run: |
-          npx teamsapp deploy --env a --ignore-env-file true \
-          --interactive false
+      # - name: Deploy to hosting environment
+      #   run: |
+      #     npx teamsapp deploy --env a --ignore-env-file true \
+      #     --interactive false
 
       - name: Package app
         run: |
@@ -54,6 +54,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: appPackage
+          path: |
+            appPackage/build/manifest.json
+            appPackage/build/color.png
+            appPackage/build/outline.png
+      - name: upload appPackage
+        uses: actions/upload-artifact@v4
+        with:
+          name: appPackage2
           path: |
             appPackage/build/manifest.json
             appPackage/build/color.png
