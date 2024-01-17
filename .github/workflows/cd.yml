@@ -25,7 +25,7 @@ jobs:
 
       - name: install cli
         run: |
-          npm install @microsoft/teamsapp-cli@${{env.TEAMSFX_CLI_VERSION}}
+          npm install -g @microsoft/teamsapp-cli@${{env.TEAMSFX_CLI_VERSION}}
 
       - name: Login Azure by service principal
         run: |
