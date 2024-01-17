@@ -35,14 +35,14 @@ jobs:
           --password ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}} \
           --interactive false
 
-      - name: Deploy to hosting environment
-        run: |
-          npx teamsapp deploy --ignore-env-file true \
-          --interactive false
+      # - name: Deploy to hosting environment
+      #   run: |
+      #     npx teamsapp deploy --ignore-env-file true \
+      #     --interactive false
 
       - name: Package app
         run: |
-          npx teamsapp package --ignore-env-file true
+          npx teamsapp package
 
       - name: unzip
         run: |
