@@ -8,7 +8,7 @@ jobs:
     environment: dev
     env:
       CI_ENABLED: true
-      TEAMSFX_CLI_VERSION: "3.0.0-alpha.38a3757c0.0"
+      TEAMSFX_CLI_VERSION: "3.0.0-alpha.9f1ef2a12.0"
       BOT_AZURE_APP_SERVICE_RESOURCE_ID: ${{vars.BOT_AZURE_APP_SERVICE_RESOURCE_ID}}
       TEAMS_APP_ID: ${{vars.TEAMS_APP_ID}}
       BOT_ID: ${{vars.BOT_ID}}
@@ -35,34 +35,18 @@ jobs:
           --password ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}} \
           --interactive false
 
-      # - name: Deploy to hosting environment
-      #   run: |
-      #     npx teamsapp deploy --env a --ignore-env-file true \
-      #     --interactive false
+      - name: Deploy to hosting environment
+        run: |
+          npx teamsapp deploy --ignore-env-file true \
+          --interactive false
 
       - name: Package app
         run: |
           npx teamsapp package
 
-      - name: unzip
-        run: |
-          cd appPackage/build
-          unzip -o -d . appPackage.zip
-          cd -
+      - name: upload appPackage
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact
+          path: appPackage/build/appPackage.zip
 
-      - name: upload appPackage
-        uses: actions/upload-artifact@v4
-        with:
-          name: appPackage
-          path: |
-            appPackage/build/manifest.json
-            appPackage/build/color.png
-            appPackage/build/outline.png
-      - name: upload appPackage
-        uses: actions/upload-artifact@v4
-        with:
-          name: appPackage2
-          path: |
-            appPackage/build/manifest.json
-            appPackage/build/color.png
-            appPackage/build/outline.png
