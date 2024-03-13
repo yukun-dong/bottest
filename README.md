@@ -1,5 +1,6 @@
 # Overview of the Basic Bot template
 
+
 Examples of Microsoft Teams bots in everyday use include:
 
 - Bots that notify about build failures.
