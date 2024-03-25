@@ -2,16 +2,18 @@ on:
   push:
     branches:
       - test
+  workflow_dispatch: # This allows manual triggering
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: dev
     env:
-      TEAMSAPP_CLI_VERSION: "3.0.0"
+      CI_ENABLED: true
+      TEAMSFX_CLI_VERSION: "3.0.0"
       BOT_AZURE_APP_SERVICE_RESOURCE_ID: ${{vars.BOT_AZURE_APP_SERVICE_RESOURCE_ID}}
-      BOT_ID: ${{vars.BOT_ID}}
       TEAMS_APP_ID: ${{vars.TEAMS_APP_ID}}
+      BOT_ID: ${{vars.BOT_ID}}
       APP_NAME_SUFFIX: ${{vars.APP_NAME_SUFFIX}}
-      # Add extra environment variables here so that teamsapp cli can use them.
 
     steps:
       - name: "Checkout Github Action"
@@ -24,14 +26,14 @@ jobs:
 
       - name: install cli
         run: |
-          npm install @microsoft/teamsapp-cli@${{env.TEAMSAPP_CLI_VERSION}}
+          npm install @microsoft/teamsapp-cli@${{env.TEAMSFX_CLI_VERSION}}
 
       - name: Login Azure by service principal
         run: |
-          npx teamsapp account login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_CLIENT_ID}}  \
+          npx teamsapp account login azure --username ${{vars.AZURE_SERVICE_PRINCIPAL_NAME}}  \
           --service-principal true \
           --tenant ${{vars.AZURE_TENANT_ID}} \
-          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_CLIENT_SECRET }} \
+          --password ${{secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD}} \
           --interactive false
 
       - name: Deploy to hosting environment
